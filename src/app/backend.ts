@@ -3,7 +3,8 @@ import express, { Express, Request, Response } from 'express';
 import components from "./components";
 import morgan from "morgan";
 import cors from "cors";
-
+import mqtt from "mqtt";
+import {Node} from "../app/models/node.model"
 async function main(){
     
     const server: Express = express(); //new express
@@ -24,6 +25,8 @@ async function main(){
     } catch (error) {
         console.log("conexion fallida");
     }
+    
+    //const client = mqtt.connect("mqtt://broker.hivemq.com")
 }
 
 export default { main };

@@ -35,6 +35,7 @@ function main() {
         catch (error) {
             console.log("conexion fallida");
         }
+        //const client = mqtt.connect("mqtt://broker.hivemq.com")
     });
 }
 exports.default = { main };

@@ -1,9 +1,48 @@
 import controller from "./node.controller";
 import { Node } from "../../models/node.model";
-import express,{Response, Request, Router} from "express";
+import express,{Response, Request, Router, json} from "express";
 import response from "../../modules/response.module";
+import mqtt from "mqtt";
 
 const router : Router = express.Router();
+const client = mqtt.connect("mqtt://broker.hivemq.com")
+client.subscribe("addNode")
+client.subscribe("getNode")
+client.subscribe("testnodo")
+//client.publish("getNode", "null")
+
+
+client.on('message', async (topic, message)=>{
+    //const payload = JSON.parse(message.toString())
+    switch(topic){
+        //case "addNode":
+            //const Node = controller.addNode(payload)
+        case "getNode":
+            try {
+                const result = await controller.getNodes();
+                console.log(result)
+            } catch (error){
+                console.error(error);
+            }
+        case "testnodo":
+            console.log(topic)
+            console.log(message.toString())
+            console.log("FUNCIONA CTM")
+    }
+})
+
+router.post('/', async (req: Request, res : Response) => {
+    const Node:string = JSON.stringify(req.body);
+    console.log(Node)
+    try{
+        client.publish("addNode", Node)
+        response.success(req, res, 'logrado');
+    } catch(error){
+        console.error(error);
+        response.error(req, res, 'Invalid Information', 500);
+    }
+
+})
 
 router.get('/all', async (req : Request, res : Response) => {
     try {
@@ -26,7 +65,7 @@ router.get('/:id', async (req : Request, res : Response) => {
         response.error(req, res, 'Invalid Information', 500);
     }
 });
-
+/*
 router.post('/', async (req: Request, res : Response) => {
     const Node : Node = req.body;
     try{
@@ -36,7 +75,8 @@ router.post('/', async (req: Request, res : Response) => {
         console.error(error);
         response.error(req, res , 'Invalid Information', 500);
     }
-})
+})*/
+
 
 router.patch('/:id', async (req: Request, res: Response) => {
     const id : string = req.params['id'];

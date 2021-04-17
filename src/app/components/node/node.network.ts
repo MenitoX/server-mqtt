@@ -5,7 +5,14 @@ import response from "../../modules/response.module";
 import mqtt from "mqtt";
 
 const router : Router = express.Router();
-const client = mqtt.connect("mqtt://broker.hivemq.com")
+const options={
+    username:"minkai",
+    password:"gordopasivo"
+};
+
+//const client = mqtt.connect("ws://54.94.28.163:1883")
+const client = mqtt.connect("ws://54.94.28.163:9001", options)
+//const client = mqtt.connect("mqtt://broker.hivemq.com")
 client.subscribe("addNode")
 client.subscribe("getNode")
 client.subscribe("testnodo")
@@ -33,6 +40,18 @@ client.on('message', async (topic, message)=>{
 
 router.post('/', async (req: Request, res : Response) => {
     const Node:string = JSON.stringify(req.body);
+    //console.log(Node)
+    try{
+        client.publish("testnodo", Node);
+        response.success(req, res, 'logrado');
+    } catch(error){
+        console.error(error);
+        response.error(req, res, 'Invalid Information', 500);
+    }
+});
+/*
+router.post('/', async (req: Request, res : Response) => {
+    const Node:string = JSON.stringify(req.body);
     console.log(Node)
     try{
         client.publish("addNode", Node)
@@ -42,7 +61,7 @@ router.post('/', async (req: Request, res : Response) => {
         response.error(req, res, 'Invalid Information', 500);
     }
 
-})
+})*/
 
 router.get('/all', async (req : Request, res : Response) => {
     try {

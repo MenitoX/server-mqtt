@@ -61,4 +61,24 @@ router.delete('/delete/:id', async (req: Request, res: Response) => {
     }
 })
 
+import mqtt from "mqtt";
+const client = mqtt.connect("mqtt://broker.hivemq.com")
+client.subscribe("testnodeSEND")
+const dummypackage:string = "{\"ds\":0,\"sw\":[]}"
+
+
+client.on('message', async (topic, message)=>{
+    //const payload = JSON.parse(message.toString())
+    switch(topic){
+        case "testnodeSEND":
+            console.log(topic)
+            console.log(message.toString())
+            console.log("FUNCIONA CTM")
+            client.publish("testnodeGET", dummypackage)
+    }
+})
+
+
+
+
 export default router;

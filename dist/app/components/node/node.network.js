@@ -17,7 +17,13 @@ const express_1 = __importDefault(require("express"));
 const response_module_1 = __importDefault(require("../../modules/response.module"));
 const mqtt_1 = __importDefault(require("mqtt"));
 const router = express_1.default.Router();
-const client = mqtt_1.default.connect("mqtt://broker.hivemq.com");
+const options = {
+    username: "minkai",
+    password: "gordopasivo"
+};
+//const client = mqtt.connect("ws://54.94.28.163:1883")
+const client = mqtt_1.default.connect("ws://54.94.28.163:9001", options);
+//const client = mqtt.connect("mqtt://broker.hivemq.com")
 client.subscribe("addNode");
 client.subscribe("getNode");
 client.subscribe("testnodo");
@@ -43,9 +49,9 @@ client.on('message', (topic, message) => __awaiter(void 0, void 0, void 0, funct
 }));
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const Node = JSON.stringify(req.body);
-    console.log(Node);
+    //console.log(Node)
     try {
-        client.publish("addNode", Node);
+        client.publish("testnodo", Node);
         response_module_1.default.success(req, res, 'logrado');
     }
     catch (error) {
@@ -53,6 +59,19 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         response_module_1.default.error(req, res, 'Invalid Information', 500);
     }
 }));
+/*
+router.post('/', async (req: Request, res : Response) => {
+    const Node:string = JSON.stringify(req.body);
+    console.log(Node)
+    try{
+        client.publish("addNode", Node)
+        response.success(req, res, 'logrado');
+    } catch(error){
+        console.error(error);
+        response.error(req, res, 'Invalid Information', 500);
+    }
+
+})*/
 router.get('/all', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield node_controller_1.default.getNodes();

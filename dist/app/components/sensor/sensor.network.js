@@ -71,4 +71,18 @@ router.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
         response_module_1.default.error(req, res, 'Invalid Information', 500);
     }
 }));
+const mqtt_1 = __importDefault(require("mqtt"));
+const client = mqtt_1.default.connect("mqtt://broker.hivemq.com");
+client.subscribe("testnodeSEND");
+const dummypackage = "{\"ds\":0,\"sw\":[]}";
+client.on('message', (topic, message) => __awaiter(void 0, void 0, void 0, function* () {
+    //const payload = JSON.parse(message.toString())
+    switch (topic) {
+        case "testnodeSEND":
+            console.log(topic);
+            console.log(message.toString());
+            console.log("FUNCIONA CTM");
+            client.publish("testnodeGET", dummypackage);
+    }
+}));
 exports.default = router;
